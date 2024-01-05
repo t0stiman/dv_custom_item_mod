@@ -8,7 +8,7 @@ namespace custom_item_mod.Patches;
 /// IDK why but a NullReferenceException occurs without this patch. Pasted the exception at the bottom of this file.
 /// </summary>
 [HarmonyPatch(typeof(InventoryItemSpec))]
-[HarmonyPatch("LocalizedName", MethodType.Getter)] //todo nameof
+[HarmonyPatch(nameof(InventoryItemSpec.LocalizedName), MethodType.Getter)]
 public class InventoryItemSpec_Patch
 {
 	private static Exception Finalizer(Exception __exception, ref InventoryItemSpec __instance, ref string __result)

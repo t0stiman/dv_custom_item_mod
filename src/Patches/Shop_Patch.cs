@@ -60,7 +60,7 @@ public class Shop_Awake_Patch
 			tmp.text = anItem.PriceText;
 		}
 
-		//todo waarom werkt dit niet
+		//todo why doesnt this work
 		// scanModules.AddItem(module);
 		// __instance.cashRegister.registerModules.AddItem(module);
 		
