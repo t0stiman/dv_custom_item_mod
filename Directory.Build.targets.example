@@ -1,0 +1,12 @@
+<Project>
+    <PropertyGroup>
+        <DvInstallDir>D:\Programs\Derail Valley</DvInstallDir>
+        <UnityInstallDir>D:\Programs\Unity\2019.4.40f1\Editor</UnityInstallDir>
+        <ReferencePath>
+            $(DvInstallDir)\DerailValley_Data\Managed\;
+            $(DvInstallDir)\DerailValley_Data\Managed\UnityModManager\;
+            $(UnityInstallDir)\Data\Managed\
+        </ReferencePath>
+        <AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
+    </PropertyGroup>
+</Project>

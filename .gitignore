@@ -1,0 +1,9 @@
+.idea
+bin
+obj
+packages
+Directory.Build.targets
+Folder.DotSettings.user
+dist
+build
+assetbundles
