@@ -1,10 +1,10 @@
 {
 	"Id": "custom_item_mod",
 	"Version": "0.0.1",
-	"DisplayName": "Blåhaj",
+	"DisplayName": "Custom Item Mod",
 	"Author": "Tostiman",
 	"EntryMethod": "custom_item_mod.Main.Load",
 	"AssemblyName": "custom_item_mod.dll",
-	"HomePage": "https://github.com/t0stiman/custom_item_mod",
-	"Repository": "https://raw.githubusercontent.com/t0stiman/custom_item_mod/master/repository.json"
+	"HomePage": "https://github.com/t0stiman/dv_custom_item_mod",
+	"Repository": "https://raw.githubusercontent.com/t0stiman/dv_custom_item_mod/master/repository.json"
 }
