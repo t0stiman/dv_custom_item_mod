@@ -6,13 +6,13 @@ using UnityModManagerNet;
 
 namespace custom_item_mod;
 
-//the code in this file is kindly borrowed from Insprill's Mapify mod
+//the code in this file is based on code from Insprill's Mapify mod
 public static class ItemModsFinder
 {
-	public const string ITEM_INFO_FILE = "map_info.json";
-	public const string MOD_INFO_FILE = "info.json";
+	public const string ITEM_INFO_FILE = "item_info.json";
 
 	public static List<CustomItem> CustomItems = new();
+	private static List<AssetBundle> loadedAssetBundles = new();
 
 	/// <summary>
 	///     name -> (info, mod, directory)
@@ -95,6 +95,8 @@ public static class ItemModsFinder
 			return;
 		}
 
+		loadedAssetBundles.Add(assBundle);
+
 		var prefab = assBundle.LoadAsset<GameObject>(itemInfo.PrefabPath);
 		var iconStandard = assBundle.LoadAsset<Sprite>(itemInfo.IconStandardPath);
 		var iconDropped = assBundle.LoadAsset<Sprite>(itemInfo.IconDroppedPath);
@@ -113,7 +115,15 @@ public static class ItemModsFinder
 			itemInfo.Price,
 			iconStandard,
 			iconDropped
-			//todo more params
+			//todo implement more parameters
 		));
+	}
+
+	public static void Unload()
+	{
+		foreach (var assBundle in loadedAssetBundles)
+		{
+			assBundle.Unload(true);
+		}
 	}
 }

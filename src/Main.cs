@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
-using UnityEngine;
 using UnityModManagerNet;
 using HarmonyLib;
 
@@ -13,8 +10,6 @@ namespace custom_item_mod
 	{
 		public static UnityModManager.ModEntry MyModEntry;
 		private static Harmony myHarmony;
-		
-		private static AssetBundle BlahajBundle;
 
 		//================================================================
 
@@ -47,7 +42,7 @@ namespace custom_item_mod
 		private static bool OnUnload(UnityModManager.ModEntry modEntry)
 		{
 			myHarmony?.UnpatchAll(MyModEntry.Info.Id);
-			BlahajBundle.Unload(true);
+			ItemModsFinder.Unload();
 			return true;
 		}
 
