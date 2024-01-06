@@ -1,4 +1,5 @@
-﻿using DV.Shops;
+﻿using System.Linq;
+using DV.Shops;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
@@ -30,7 +31,7 @@ public class Shop_Awake_Patch
 		var newScanModuleObject =
 			Object.Instantiate(existingScanModuleObject, existingScanModuleObject.transform.parent);
 
-		//todo
+		//todo better sign positioning system
 		newScanModuleObject.transform.localPosition -= new Vector3((itemNumber+1)*0.5f, 0, 0);
 
 		newScanModuleObject.name = $"{existingScanModuleObject.name}({anItem.ItemSpec.LocalizedName})";
@@ -59,12 +60,8 @@ public class Shop_Awake_Patch
 			var tmp = priceObj.GetComponent<TextMeshPro>();
 			tmp.text = anItem.PriceText;
 		}
-
-		//todo why doesnt this work
-		// scanModules.AddItem(module);
-		// __instance.cashRegister.registerModules.AddItem(module);
 		
-		aShop.scanItemResourceModules = new[] { module };
-		aShop.cashRegister.registerModules = new[] { module };
+		aShop.scanItemResourceModules = aShop.scanItemResourceModules.Append(module).ToArray();
+		aShop.cashRegister.registerModules = aShop.cashRegister.registerModules.Append(module).ToArray();
 	}
 }
