@@ -12,7 +12,9 @@ public static class ItemModsFinder
 	public const string ITEM_INFO_FILE = "item_info.json";
 
 	public static List<CustomItem> CustomItems = new();
-	private static List<AssetBundle> loadedAssetBundles = new();
+	
+	//store the file paths of bundles so we can check if they are already loaded
+	private static List<(string, AssetBundle)> loadedAssetBundles = new();
 
 	/// <summary>
 	///     name -> (info, mod, directory)
@@ -80,48 +82,81 @@ public static class ItemModsFinder
 		}
 	}
 	
-	private static string GetModAsset(string fileName, string modDir)
+	public static string GetModAsset(string fileName, string modDir)
 	{
 		return Path.Combine(modDir, fileName);
 	}
 	
 	private static void SetupItem(CustomItemInfo itemInfo, string itemDirectory)
 	{
-		var assBundle = AssetBundle.LoadFromFile(Path.Combine(itemDirectory, itemInfo.AssetBundleName));
+		var assBundle = LoadAssetbundle(itemInfo, itemDirectory);
+		if(assBundle == null){ return; }
+
+		bool success = true;
+		var prefab = assBundle.LoadAsset<GameObject>(itemInfo.PrefabPath);
+		if (prefab == null)
+		{
+			Main.Error($"Failed to load {nameof(prefab)} from item {itemInfo.Name} at {itemInfo.PrefabPath}");
+			success = false;
+		}
 		
+		var iconStandard = assBundle.LoadAsset<Sprite>(itemInfo.IconStandardPath);
+		if (iconStandard == null)
+		{
+			Main.Error($"Failed to load {nameof(iconStandard)} from item {itemInfo.Name} at {itemInfo.IconStandardPath}");
+			success = false;
+		}
+		
+		var iconDropped = assBundle.LoadAsset<Sprite>(itemInfo.IconDroppedPath);
+		if (iconDropped == null)
+		{
+			Main.Error($"Failed to load {nameof(iconDropped)} from item {itemInfo.Name} at {itemInfo.IconDroppedPath}");
+			success = false;
+		}
+
+		if (success)
+		{
+			CustomItems.Add(new CustomItem(
+				itemInfo.Name,
+				itemInfo.Description,
+				prefab,
+				itemInfo.Amount,
+				itemInfo.Price,
+				iconStandard,
+				iconDropped
+				//todo implement more parameters
+			));
+		}
+	}
+
+	private static AssetBundle LoadAssetbundle(CustomItemInfo itemInfo, string itemDirectory)
+	{
+		var bundlePath = Path.GetFullPath(Path.Combine(itemDirectory, itemInfo.AssetBundleName));
+
+		//is already loaded?
+		foreach (var idk in loadedAssetBundles)
+		{
+			if (idk.Item1 == bundlePath && idk.Item2 != null)
+			{
+				return idk.Item2;
+			}
+		}
+
+		//load it
+		var assBundle = AssetBundle.LoadFromFile(bundlePath);
 		if (assBundle == null)
 		{
-			Main.Error($"Failed to load the assetbundle from item {itemInfo.Name}");
-			return;
+			Main.Error($"Failed to load the assetbundle from item '{itemInfo.Name}' at '{bundlePath}'");
+			return null;
 		}
-
-		loadedAssetBundles.Add(assBundle);
-
-		var prefab = assBundle.LoadAsset<GameObject>(itemInfo.PrefabPath);
-		var iconStandard = assBundle.LoadAsset<Sprite>(itemInfo.IconStandardPath);
-		var iconDropped = assBundle.LoadAsset<Sprite>(itemInfo.IconDroppedPath);
-
-		if (prefab == null || iconStandard == null || iconDropped == null)
-		{
-			Main.Error($"Failed to load one or more assets from item {itemInfo.Name}");
-			return;
-		}
-
-		CustomItems.Add(new CustomItem(
-			itemInfo.Name,
-			itemInfo.Description,
-			prefab,
-			itemInfo.Amount,
-			itemInfo.Price,
-			iconStandard,
-			iconDropped
-			//todo implement more parameters
-		));
+		
+		loadedAssetBundles.Add((bundlePath, assBundle));
+		return assBundle;
 	}
 
 	public static void Unload()
 	{
-		foreach (var assBundle in loadedAssetBundles)
+		foreach (var assBundle in  AssetBundle.GetAllLoadedAssetBundles())
 		{
 			assBundle.Unload(true);
 		}
