@@ -36,10 +36,7 @@ public static class ItemModsFinder
 		{
 			Main.Log($"New mod enabled ({aModEntry.Info.DisplayName}), checking for custom items...");
 			FindCustomItemsInMod(aModEntry);
-			return;
 		}
-
-		// UnloadMod(aModEntry);
 	} 
 	
 	private static void FindCustomItemsInMod(UnityModManager.ModEntry aModEntry)
