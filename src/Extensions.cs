@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace custom_item_mod;
@@ -40,5 +41,15 @@ public static class Extensions
 		{
 			transformChild.SetLayerIncludingChildren(layerNumber);
 		}
+	}
+
+	public static string GetPath(this GameObject gameObject)
+	{
+		return string.Join("/", gameObject.GetComponentsInParent<Transform>().Select(t => t.name).Reverse().ToArray());
+	}
+
+	public static void Start(this Shop shop)
+	{
+		Main.Log("Shop.Start");
 	}
 }
