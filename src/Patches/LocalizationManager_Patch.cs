@@ -9,7 +9,7 @@ public static class LocalizationManager_GetTranslation_Patch
 	private static bool Prefix(ref string __result, string Term)
 	{
 		if (!Term.StartsWith(Main.MyModEntry.Info.Id)) {
-			return true;
+			return true; // execute original function
 		}
 
 		foreach (var item in ItemModsFinder.CustomItems)
