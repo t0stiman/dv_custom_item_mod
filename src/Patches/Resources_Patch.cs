@@ -28,11 +28,10 @@ public class Resources_Load_Patch
 	{
 		foreach (var item in ItemModsFinder.CustomItems)
 		{
-			if (path == item.ItemSpec.itemPrefabName)
-			{
-				__result = item.ItemPrefab;
-				return false; //skip original
-			}
+			if (path != item.ItemSpec.itemPrefabName) continue;
+
+			__result = item.WorldObject;
+			return false; //skip original
 		}
 
 		return true;

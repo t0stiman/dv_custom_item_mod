@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using DV.Shops;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace custom_item_mod;
@@ -40,5 +42,20 @@ public static class Extensions
 		{
 			transformChild.SetLayerIncludingChildren(layerNumber);
 		}
+	}
+
+	public static void SetValues(this ShelfItem this_, ShelfItem other)
+	{
+		this_.size = other.size;
+		this_.height = other.height;
+		
+		if (!this_.TryGetComponent(typeof(BoxCollider), out Component boxCollider)) return;
+		
+		//regenerate the collider
+		var boxColliderComp = (BoxCollider)boxCollider;
+		
+		// Values copied from ShelfItem.Awake
+		boxColliderComp.center = new float3(0.0f, this_.height * 0.5f, this_.size.y * -0.5f);
+		boxColliderComp.size = new float3(this_.size.x, this_.height, this_.size.y);
 	}
 }

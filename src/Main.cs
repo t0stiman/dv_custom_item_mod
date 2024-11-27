@@ -19,7 +19,6 @@ namespace custom_item_mod
 			{
 				MyModEntry = modEntry;
 				
-				modEntry.OnToggle = OnToggle;
 				modEntry.OnUnload = OnUnload;
 
 				ItemModsFinder.Setup();
@@ -43,14 +42,6 @@ namespace custom_item_mod
 		{
 			myHarmony?.UnpatchAll(MyModEntry.Info.Id);
 			ItemModsFinder.Unload();
-			return true;
-		}
-
-		private static bool OnToggle(UnityModManager.ModEntry modEntry, bool enabled) 
-		{
-			string msg = enabled ? "hello!" : "goodbye!";
-			modEntry.Logger.Log(msg);
-
 			return true;
 		}
 		

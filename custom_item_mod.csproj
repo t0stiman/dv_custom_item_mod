@@ -154,7 +154,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Publicize Include="Assembly-CSharp" />
+    <Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" />
+    <Publicize Include="DV.Interaction" IncludeCompilerGeneratedMembers="false" />
   </ItemGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

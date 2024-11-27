@@ -32,11 +32,10 @@ public static class ItemModsFinder
 	
 	private static void ToggleModsListen(UnityModManager.ModEntry aModEntry, bool modEnabled)
 	{
-		if (modEnabled)
-		{
-			Main.Log($"New mod enabled ({aModEntry.Info.DisplayName}), checking for custom items...");
-			FindCustomItemsInMod(aModEntry);
-		}
+		if (!modEnabled) return;
+		
+		Main.Log($"New mod enabled ({aModEntry.Info.DisplayName}), checking for custom items...");
+		FindCustomItemsInMod(aModEntry);
 	} 
 	
 	private static void FindCustomItemsInMod(UnityModManager.ModEntry aModEntry)
@@ -63,6 +62,7 @@ public static class ItemModsFinder
 				continue;
 			}
 
+			Main.Log("sanity check");
 			Main.Log($"Found custom item '{itemInfo.Name}' from '{aModEntry.Info.DisplayName}' in '{modSubDirectory}'");
 
 			try
@@ -121,7 +121,7 @@ public static class ItemModsFinder
 				itemInfo.Price,
 				iconStandard,
 				iconDropped
-				//todo implement more parameters
+				//todo implement more parameters?
 			));
 		}
 	}
@@ -131,11 +131,11 @@ public static class ItemModsFinder
 		var bundlePath = Path.GetFullPath(Path.Combine(itemDirectory, itemInfo.AssetBundleName));
 
 		//is already loaded?
-		foreach (var idk in loadedAssetBundles)
+		foreach (var loadedAssBundle in loadedAssetBundles)
 		{
-			if (idk.Item1 == bundlePath && idk.Item2 != null)
+			if (loadedAssBundle.Item1 == bundlePath && loadedAssBundle.Item2 != null)
 			{
-				return idk.Item2;
+				return loadedAssBundle.Item2;
 			}
 		}
 
