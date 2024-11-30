@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DV.CabControls;
 using DV.CabControls.Spec;
 using DV.CashRegister;
+using DV.Interaction;
 using DV.Shops;
 using HarmonyLib;
 using TMPro;
@@ -73,7 +75,6 @@ public class CustomItem
 		var shelfObject = new GameObject();
 		shelfObject.SetActive(false);
 		shelfObject.name = $"{ItemPrefab.name}_ShelfItem";
-		shelfObject.SetActive(false);
 		var shelfItemComponent = shelfObject.AddComponent<ShelfItem>();
 
 		Main.Log($"Built shelf object for {itemInfo.Name}");
@@ -95,8 +96,15 @@ public class CustomItem
 		tag.parent = ShopData.shelfItem.transform;
 		tag.name = "ScanItem";
 		shopController.shopItemsData.Add(ShopData);
-    }
-    public void AddToShop(Shop shop)
+		ItemPrefab.SetActive(true);
+		Object.Destroy(ItemPrefab.GetComponent<CabItemRigidbody>());
+		Object.Destroy(ItemPrefab.GetComponent<ItemBase>());
+		Object.Destroy(ItemPrefab.GetComponent<RespawnOnDrop>());
+		Object.Destroy(ItemPrefab.GetComponent<NonAABBReflectionProbeSampler>());
+		Object.Destroy(ItemPrefab.GetComponent<ItemBuoyancy>());
+		Object.Destroy(ItemPrefab.GetComponent<GrabHandlerItem>());
+	}
+	public void AddToShop(Shop shop)
 	{
         if (ShopData.soldOnlyAt != default(List<Shop>) && ShopData.soldOnlyAt.Count > 0 && !ShopData.soldOnlyAt.Contains(shop))
         {
@@ -132,10 +140,12 @@ public class CustomItem
         //this makes sure the item collides with the right stuff
         item.SetLayerIncludingChildren(LayerMask.NameToLayer("World_Item"));
 
-        item.AddComponent<DV.CabControls.Spec.Item>();
+        var itemSpec = item.AddComponent<DV.CabControls.Spec.Item>();
         item.AddComponent<DV.Items.TrainItemActivityHandlerOverride>();
         item.AddComponent<ItemSaveData>();
         item.AddComponent<ShopRestocker>();
+		itemSpec.colliderGameObjects = (from c in item.GetComponentsInChildren<Collider>()
+									   select c.gameObject).ToArray();
 		return item;
     }
 
