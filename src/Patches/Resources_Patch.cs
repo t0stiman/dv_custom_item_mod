@@ -26,11 +26,13 @@ public class Resources_Load_Patch
 	
 	private static bool Prefix(MethodBase __originalMethod, string path, ref Object __result)
 	{
+		//Main.Log($"Possibly patching asset loading for {path}");
 		foreach (var item in ItemModsFinder.CustomItems)
 		{
 			if (path != item.ItemSpec.itemPrefabName) continue;
 
-			__result = item.WorldObject;
+			Main.Log($"Patched asset loading for {path}");
+			__result = item.ItemPrefab;
 			return false; //skip original
 		}
 

@@ -7,22 +7,22 @@ namespace custom_item_mod.Patches;
 /// <summary>
 /// IDK why but a NullReferenceException occurs without this patch. Pasted the exception at the bottom of this file.
 /// </summary>
-[HarmonyPatch(typeof(InventoryItemSpec))]
-[HarmonyPatch(nameof(InventoryItemSpec.LocalizedName), MethodType.Getter)]
-public class InventoryItemSpec_Patch
-{
-	private static Exception Finalizer(Exception __exception, ref InventoryItemSpec __instance, ref string __result)
-	{
-		if(__instance.itemPrefabName.StartsWith(Main.MyModEntry.Info.Id) &&
-		   __exception.GetType() == typeof(NullReferenceException))
-		{
-			__result = LocalizationAPI.L(__instance.localizationKeyName);
-			return null;
-		}
+//[HarmonyPatch(typeof(InventoryItemSpec))]
+//[HarmonyPatch(nameof(InventoryItemSpec.LocalizedName), MethodType.Getter)]
+//public class InventoryItemSpec_Patch
+//{
+//	private static Exception Finalizer(Exception __exception, ref InventoryItemSpec __instance, ref string __result)
+//	{
+//		if(__instance.itemPrefabName.StartsWith(Main.MyModEntry.Info.Id) &&
+//		   __exception.GetType() == typeof(NullReferenceException))
+//		{
+//			__result = LocalizationAPI.L(__instance.localizationKeyName);
+//			return null;
+//		}
 		
-		return __exception;
-	}
-}
+//		return __exception;
+//	}
+//}
 
 /*
 NullReferenceException

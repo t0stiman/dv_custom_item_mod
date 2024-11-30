@@ -9,13 +9,13 @@ namespace custom_item_mod.Patches;
 [HarmonyPatch(nameof(Shop.Awake))]
 public class Shop_Awake_Patch
 {
-	private static void Postfix(ref Shop __instance)
-	{
-		foreach (var item in ItemModsFinder.CustomItems)
-		{
-			AddItemToShop(item, ref __instance);
-		}
-	}
+	//private static void Postfix(ref Shop __instance)
+	//{
+	//	foreach (var item in ItemModsFinder.CustomItems)
+	//	{
+	//		AddItemToShop(item, ref __instance);
+	//	}
+	//}
 
 	private static void AddItemToShop(CustomItem anItem, ref Shop aShop)
 	{
