@@ -21,7 +21,6 @@ public class CustomItem
 	public GameObject ItemPrefab { get; private set; }
 
 	public InventoryItemSpec ItemSpec => ShopData.item;
-	// public ShelfItem ShelfComponent => ShopData.shelfItem;
 	public ShopItemData ShopData { get; private set; }
 
 	public GameObject ProvidedPrefab { get; private set; }
