@@ -158,14 +158,6 @@
     <Publicize Include="DV.Interaction" IncludeCompilerGeneratedMembers="false" />
   </ItemGroup>
   
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <!-- Copy to build folder -->
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="build/" />
-
-    <!-- Package after Release build -->
-    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="powershell -executionpolicy bypass .\package.ps1 -NoArchive -OutputDirectory 'D:\Programs\Derail Valley\Mods'" />
-    <!-- Linux -->
-    <Exec Condition="'$(OS)' != 'Windows_NT'" Command="pwsh -Command &quot;(package.ps1)&quot;" />
-  </Target>
+  
   
 </Project>
