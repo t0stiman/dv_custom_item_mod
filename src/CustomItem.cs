@@ -73,7 +73,7 @@ public class CustomItem
         Main.Log($"Built item spec for {itemInfo.Name}");
 
 		var shelfObject = new GameObject();
-		shelfObject.SetActive(false);
+		shelfObject.transform.parent = ItemPrefab.transform.parent;
 		shelfObject.name = $"{ItemPrefab.name}_ShelfItem";
 		var shelfItemComponent = shelfObject.AddComponent<ShelfItem>();
 
@@ -90,60 +90,88 @@ public class CustomItem
 		};
 	}
 
+	/// <summary>
+	/// Called to handle initialization steps that depend on GlobalShopController
+	/// </summary>
+	/// <param name="shopController"></param>
 	public void FinishInitialization(GlobalShopController shopController)
 	{
+		// Create the scan tag for purchasing
 		var tag = Object.Instantiate(shopController.scanItemShelfPrefab.transform.Find("ScanItem"));
 		tag.parent = ShopData.shelfItem.transform;
 		tag.name = "ScanItem";
-		shopController.shopItemsData.Add(ShopData);
-		ItemPrefab.SetActive(true);
-		Object.Destroy(ItemPrefab.GetComponent<CabItemRigidbody>());
-		Object.Destroy(ItemPrefab.GetComponent<ItemBase>());
-		Object.Destroy(ItemPrefab.GetComponent<RespawnOnDrop>());
-		Object.Destroy(ItemPrefab.GetComponent<NonAABBReflectionProbeSampler>());
-		Object.Destroy(ItemPrefab.GetComponent<ItemBuoyancy>());
-		Object.Destroy(ItemPrefab.GetComponent<GrabHandlerItem>());
-	}
-	public void AddToShop(Shop shop)
+
+		// Add a preview object to show on the shelf
+        var shopSample = UnityEngine.Object.Instantiate(ProvidedPrefab);
+        shopSample.name = $"{ProvidedPrefab.name} - preview";
+        shopSample.transform.parent = ShopData.shelfItem.transform;
+		// this probably needs to be adjusted for other items - we may want to make this something in the json?
+		// TODO: figure out a sane way to calculate this.
+        shopSample.transform.localPosition = new Vector3(0f, 0f, -0.1f);
+
+		// Add the ScanItemCashRegisterModule to the shelf item
+		var module = ShopData.shelfItem.gameObject.AddComponent<ScanItemCashRegisterModule>();
+        module.sellingItemSpec = ShopData.item;
+        module.itemNameText = ShopData.shelfItem.transform.Find("ScanItem/Texts/Name").gameObject.GetComponent<TextMeshPro>();
+        module.itemPriceText = ShopData.shelfItem.transform.Find("ScanItem/Texts/Price").gameObject.GetComponent<TextMeshPro>();
+
+        // Add the shopItemData to the GlobalShopController - we'll later have the shopcontroller recalculate it's available stock
+        shopController.shopItemsData.Add(ShopData);
+    }
+
+    /// <summary>
+    /// Add a shop item to a specific shop - this should be called once per shop item and shop - it will decide if that shop is disallowed or not
+    /// </summary>
+    /// <param name="shop"></param>
+    public void AddToShop(Shop shop)
 	{
         if (ShopData.soldOnlyAt != default(List<Shop>) && ShopData.soldOnlyAt.Count > 0 && !ShopData.soldOnlyAt.Contains(shop))
         {
+			// We're not supposed to add this item to this shop.
             return;
         }
+
         Main.Log($"Adding {Name} to {shop.name}");
-        var shopItem = UnityEngine.Object.Instantiate(ShopData.shelfItem);
-        shopItem.name = ShopData.shelfItem.name;
-        shopItem.transform.parent = shop.transform.Find("ScanItemAnchor");
-        var shopSample = UnityEngine.Object.Instantiate(ProvidedPrefab);
-        shopSample.name = $"{ProvidedPrefab.name} - preview";
-        shopSample.transform.parent = shopItem.transform;
-        shopSample.transform.localPosition = new Vector3(0f, 0f, -0.1f);
+
+		// Create a new shelf item from the shelf item prefab
+        var shelfItem = UnityEngine.Object.Instantiate(ShopData.shelfItem);
+        shelfItem.name = ShopData.shelfItem.name;
+        shelfItem.transform.parent = shop.transform.Find("ScanItemAnchor");
         Main.Log($"{Name} shop item created");
-        var module = shopItem.gameObject.AddComponent<ScanItemCashRegisterModule>();
-        module.sellingItemSpec = ShopData.item;
-        module.itemNameText = shopItem.transform.Find("ScanItem/Texts/Name").gameObject.GetComponent<TextMeshPro>();
-        module.itemPriceText = shopItem.transform.Find("ScanItem/Texts/Price").gameObject.GetComponent<TextMeshPro>();
+
         Main.Log($"{Name} scanModule initialized");
+		// add scanItemCashRegisterModule to the shop and the register
+		var module = shelfItem.GetComponent<ScanItemCashRegisterModule>();
         shop.scanItemResourceModules = shop.scanItemResourceModules.AddItem(module).ToArray();
         var register = shop.GetComponentInChildren<CashRegisterWithModules>();
         register.registerModules = register.registerModules.AddItem(module).ToArray();
-        shopItem.gameObject.SetActive(true);
+
         Main.Log($"{Name} added to {shop.name}");
     }
 
     private GameObject CreateItemPrefab(GameObject unityPrefab)
     {
+		// root object is just a container object - it'll never be returned to anything else
+		// however it allows it's child to look "active" while being not active
+        var rootObject = new GameObject();
+        rootObject.name = $"{unityPrefab.name}_root";
+        rootObject.SetActive(false);
+
+		// create the item object itself - using the prefab provided by the custom item author
         var item = Object.Instantiate(unityPrefab);
 		item.name = unityPrefab.name;
-		item.SetActive(false);
-		Object.DontDestroyOnLoad(item);
+		item.transform.parent = rootObject.transform;
+
         //this makes sure the item collides with the right stuff
         item.SetLayerIncludingChildren(LayerMask.NameToLayer("World_Item"));
 
+		// these components are standard requirements for every item but cannot be added in Unity due to them being in Assembly and not a custom dll
         var itemSpec = item.AddComponent<DV.CabControls.Spec.Item>();
         item.AddComponent<DV.Items.TrainItemActivityHandlerOverride>();
         item.AddComponent<ItemSaveData>();
         item.AddComponent<ShopRestocker>();
+
+		//TODO: Provide a way for item authors to declare which colliders are standard interaction colliders and which are not - needed for gadget support
 		itemSpec.colliderGameObjects = (from c in item.GetComponentsInChildren<Collider>()
 									   select c.gameObject).ToArray();
 		return item;
