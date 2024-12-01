@@ -59,10 +59,10 @@ public class CustomItem
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
-        var previewBounds = itemInfo.PreviewBounds;
+		var previewBounds = itemInfo.PreviewBounds;
 		Main.Log($"Preview bounds: {previewBounds}");
-        if (previewBounds == default)
-        {
+		if (previewBounds == default)
+		{
 			var collider = ProvidedPrefab.GetComponentInChildren<BoxCollider>();
 			if (collider != null)
 			{
@@ -72,11 +72,11 @@ public class CustomItem
 			{
 				previewBounds = new Vector3(0.2f, 0.2f, 0.2f);
 			}
-        }
-        if (previewRotation == default) { previewRotation = Vector3.zero; }
+		}
+		if (previewRotation == default) { previewRotation = Vector3.zero; }
 
-        var itemSpec = SetupItemSpec(immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
-        Main.Log($"Built item spec for {itemInfo.Name}");
+		var itemSpec = SetupItemSpec(immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
+		Main.Log($"Built item spec for {itemInfo.Name}");
 
 		var shelfObject = new GameObject();
 		shelfObject.SetActive(false);
@@ -150,9 +150,9 @@ public class CustomItem
 		Main.Log($"{Name} scanModule initialized");
 		// add scanItemCashRegisterModule to the shop and the register
 		var module = shelfItem.GetComponent<ScanItemCashRegisterModule>();
-        shop.scanItemResourceModules = shop.scanItemResourceModules.AddItem(module).ToArray();
-        var register = shop.GetComponentInChildren<CashRegisterWithModules>();
-        register.registerModules = register.registerModules.AddItem(module).ToArray();
+		shop.scanItemResourceModules = shop.scanItemResourceModules.AddItem(module).ToArray();
+		var register = shop.GetComponentInChildren<CashRegisterWithModules>();
+		register.registerModules = register.registerModules.AddItem(module).ToArray();
 		shelfItem.gameObject.SetActive(true);
 
 		Main.Log($"{Name} added to {shop.name}");
