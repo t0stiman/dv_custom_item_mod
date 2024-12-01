@@ -88,7 +88,7 @@ public static class ItemModsFinder
 		}
 	}
 
-    public static string GetModAsset(string fileName, string modDir)
+	public static string GetModAsset(string fileName, string modDir)
 	{
 		return Path.Combine(modDir, fileName);
 	}
@@ -141,21 +141,21 @@ public static class ItemModsFinder
 	{
 		var bundlePath = Path.GetFullPath(Path.Combine(itemDirectory, itemInfo.AssetBundleName));
 
-        //is already loaded?
-        if (!loadedAssetBundles.ContainsKey(bundlePath))
+		//is already loaded?
+		if (!loadedAssetBundles.ContainsKey(bundlePath))
 		{
-            //load it
-            var assBundle = AssetBundle.LoadFromFile(bundlePath);
-            if (assBundle == null)
-            {
-                Main.Error($"Failed to load the assetbundle from item '{itemInfo.Name}' at '{bundlePath}'");
-                return null;
-            }
+			//load it
+			var assBundle = AssetBundle.LoadFromFile(bundlePath);
+			if (assBundle == null)
+			{
+				Main.Error($"Failed to load the assetbundle from item '{itemInfo.Name}' at '{bundlePath}'");
+				return null;
+			}
 
-            loadedAssetBundles[bundlePath] = assBundle;
-        }
+			loadedAssetBundles[bundlePath] = assBundle;
+		}
 
-        return loadedAssetBundles[bundlePath];
+		return loadedAssetBundles[bundlePath];
 	}
 
 	public static void Unload()
@@ -166,8 +166,8 @@ public static class ItemModsFinder
 		}
 	}
 
-    internal static void FinalizeItems(GlobalShopController instance)
-    {
+	internal static void FinalizeItems(GlobalShopController instance)
+	{
 		instance.SetupListeners(false);
 		foreach (var item in CustomItems)
 		{
@@ -177,8 +177,8 @@ public static class ItemModsFinder
 				item.AddToShop(shop);
 			}
 		}
-        instance.initialAmounts.Clear();
-        instance.InitializeShopData();
-        instance.SetupListeners(true);
-    }
+		instance.initialAmounts.Clear();
+		instance.InitializeShopData();
+		instance.SetupListeners(true);
+	}
 }
