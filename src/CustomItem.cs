@@ -23,14 +23,16 @@ public class CustomItem
 	public InventoryItemSpec ItemSpec => ShopData.item;
 	public ShopItemData ShopData { get; private set; }
 
-	public GameObject ProvidedPrefab { get; private set; }
-	private CustomItemInfo itemInfo;
+	private readonly GameObject providedItemPrefab;
+	private readonly GameObject providedShelfPrefab;
+	private readonly CustomItemInfo itemInfo;
 	
 	
 	/// <param name="itemInfo">The parsed item info json</param>
-	/// <param name="unityPrefab">the prefab of the item as extracted from the asset bundle</param>
+	/// <param name="providedItemPrefab">the prefab of the item as extracted from the asset bundle</param>
 	/// <param name="iconStandard">the inventory icon</param>
 	/// <param name="iconDropped">this icon will be shown in your inventory when you've dropped the item. For vanilla game items, this is a blue (#72A2B3) silhouette of the item.</param>
+	/// <param name="providedShelfPrefab">This prefab, if it exists, will be used for the shelf item.  This can have multiple items, different orientations, etc</param>
 	/// <param name="previewRotation">TODO what is this</param>
 	/// <param name="soldOnlyAt">item will only be available at these shops</param>
 	/// <param name="previewBounds">TODO IDK what this is</param>
@@ -39,10 +41,11 @@ public class CustomItem
 	/// <param name="isEssential">if true, the item will leave a ghost in your inventory when you drop it and the inventory slot will be reserved for this item</param>
 	public CustomItem(
 		CustomItemInfo itemInfo,
-		GameObject unityPrefab,
+		GameObject providedItemPrefab,
 		Sprite iconStandard,
 		Sprite iconDropped,
-		Vector3 previewRotation = default,
+        GameObject providedShelfPrefab = default,
+        Vector3 previewRotation = default,
 		List<Shop> soldOnlyAt = default,
 		bool careerOnly = false,
 		bool immuneToDumpster = true,
@@ -58,13 +61,13 @@ public class CustomItem
 		
 		Name = itemInfo.Name;
 		Description = itemInfo.Description;
-		ItemPrefab = CreateItemPrefab(unityPrefab);
-		ProvidedPrefab = unityPrefab;
+		ItemPrefab = CreateItemPrefab(providedItemPrefab);
+		this.providedItemPrefab = providedItemPrefab;
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
 		Vector3 previewBounds = default;
-		var collider = ProvidedPrefab.GetComponentInChildren<BoxCollider>();
+		var collider = this.providedItemPrefab.GetComponentInChildren<BoxCollider>();
 		if (collider != null)
 		{
 			previewBounds = collider.size;
@@ -117,8 +120,8 @@ public class CustomItem
 		tag.name = "ScanItem";
 
 		// Add a preview object to show on the shelf
-		var shopSample = UnityEngine.Object.Instantiate(ProvidedPrefab);
-		shopSample.name = $"{ProvidedPrefab.name} - preview";
+		var shopSample = UnityEngine.Object.Instantiate(providedItemPrefab);
+		shopSample.name = $"{providedItemPrefab.name} - preview";
 		shopSample.transform.parent = ShopData.shelfItem.transform;
 		// this probably needs to be adjusted for other items - we may want to make this something in the json?
 		// TODO: figure out a sane way to calculate this.
