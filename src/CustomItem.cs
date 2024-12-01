@@ -74,7 +74,7 @@ public class CustomItem
 		}
 		if (previewRotation == default) { previewRotation = Vector3.zero; }
 
-		var itemSpec = SetupItemSpec(providedItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
+		var itemSpec = SetupItemSpec(ItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
 		Main.Log($"Built item spec for {itemInfo.Name}");
 
 		var shelfObject = new GameObject();
