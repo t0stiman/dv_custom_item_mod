@@ -40,8 +40,8 @@ public class CustomItem
 		GameObject providedItemPrefab,
 		Sprite iconStandard,
 		Sprite iconDropped,
-        GameObject providedShelfPrefab = default,
-        Vector3 previewRotation = default,
+		GameObject providedShelfPrefab = default,
+		Vector3 previewRotation = default,
 		List<Shop> soldOnlyAt = default,
 		bool careerOnly = false,
 		bool immuneToDumpster = true,
@@ -112,11 +112,11 @@ public class CustomItem
 		};
 	}
 
-    /// <summary>
-    /// Called to handle initialization steps that depend on GlobalShopController
-    /// </summary>
-    /// <param name="shopController"></param>
-    public void FinishInitialization(GlobalShopController shopController)
+	/// <summary>
+	/// Called to handle initialization steps that depend on GlobalShopController
+	/// </summary>
+	/// <param name="shopController"></param>
+	public void FinishInitialization(GlobalShopController shopController)
 	{
 		// Create the scan tag for purchasing
 		var tag = Object.Instantiate(shopController.scanItemShelfPrefab.transform.Find("ScanItem"));
@@ -234,32 +234,32 @@ public class CustomItem
 		return itemSpec;
 	}
 
-    private static void AddShelfSample(GameObject shelfObject, CustomItemInfo itemInfo, GameObject providedItemPrefab, GameObject providedShelfPrefab = default)
-    {
-        // Add a preview object to show on the shelf
-        GameObject shopSample;
-        if (providedShelfPrefab != default)
-        {
-            shopSample = UnityEngine.Object.Instantiate(providedShelfPrefab);
-            shopSample.name = providedShelfPrefab.name;
-        }
-        else
-        {
-            shopSample = UnityEngine.Object.Instantiate(providedItemPrefab);
-            shopSample.name = $"{providedItemPrefab.name} - preview";
-        }
-        shopSample.transform.parent = shelfObject.transform;
-        if (itemInfo.ShelfRotation != default)
-        {
-            shopSample.transform.eulerAngles = itemInfo.ShelfRotation;
-        }
-        else if (providedShelfPrefab == default)
-        {
-            shopSample.transform.eulerAngles = new Vector3(0, 180, 0);
-        }
-        if (itemInfo.ShelfScale != default)
-        {
-            shopSample.transform.localScale = itemInfo.ShelfScale;
-        }
-    }
+	private static void AddShelfSample(GameObject shelfObject, CustomItemInfo itemInfo, GameObject providedItemPrefab, GameObject providedShelfPrefab = default)
+	{
+		// Add a preview object to show on the shelf
+		GameObject shopSample;
+		if (providedShelfPrefab != default)
+		{
+			shopSample = UnityEngine.Object.Instantiate(providedShelfPrefab);
+			shopSample.name = providedShelfPrefab.name;
+		}
+		else
+		{
+			shopSample = UnityEngine.Object.Instantiate(providedItemPrefab);
+			shopSample.name = $"{providedItemPrefab.name} - preview";
+		}
+		shopSample.transform.parent = shelfObject.transform;
+		if (itemInfo.ShelfRotation != default)
+		{
+			shopSample.transform.eulerAngles = itemInfo.ShelfRotation;
+		}
+		else if (providedShelfPrefab == default)
+		{
+			shopSample.transform.eulerAngles = new Vector3(0, 180, 0);
+		}
+		if (itemInfo.ShelfScale != default)
+		{
+			shopSample.transform.localScale = itemInfo.ShelfScale;
+		}
+	}
 }
