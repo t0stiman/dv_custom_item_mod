@@ -89,9 +89,16 @@ public class CustomItem
 
 		// shelf bounds may be defined in the json, or it may be defined by a collider on the main object, or it may be defaulted
 		var shelfSize = itemInfo.ShelfBounds;
-		if (shelfSize == default)
+		if (shelfSize == default && providedShelfPrefab == default)
 		{
 			shelfSize = previewBounds;
+		} else if (shelfSize == default && providedShelfPrefab != default) {
+			var shelfCollider = providedShelfPrefab.GetComponent<BoxCollider>();
+			if (shelfCollider != null)
+			{
+				shelfSize = shelfCollider.size;
+			}
+			else shelfSize = previewBounds;
 		}
 		shelfItemComponent.size = new Vector2(shelfSize.x, shelfSize.y);
 
@@ -120,12 +127,26 @@ public class CustomItem
 		tag.name = "ScanItem";
 
 		// Add a preview object to show on the shelf
-		var shopSample = UnityEngine.Object.Instantiate(providedItemPrefab);
-		shopSample.name = $"{providedItemPrefab.name} - preview";
+		GameObject shopSample;
+		if (providedShelfPrefab != default)
+		{
+			shopSample = UnityEngine.Object.Instantiate(providedShelfPrefab);
+			shopSample.name = providedShelfPrefab.name;
+		}
+		else
+		{
+			shopSample = UnityEngine.Object.Instantiate(providedItemPrefab);
+			shopSample.name = $"{providedItemPrefab.name} - preview";
+		}
 		shopSample.transform.parent = ShopData.shelfItem.transform;
-		// this probably needs to be adjusted for other items - we may want to make this something in the json?
-		// TODO: figure out a sane way to calculate this.
-		shopSample.transform.localPosition = new Vector3(0f, 0f, -0.1f);
+		if (itemInfo.ShelfRotation != default)
+		{
+			shopSample.transform.eulerAngles = itemInfo.ShelfRotation;
+		}
+		if (itemInfo.ShelfScale != default)
+		{
+			shopSample.transform.localScale = itemInfo.ShelfScale;
+		}
 
 		// Add the ScanItemCashRegisterModule to the shelf item
 		var module = ShopData.shelfItem.gameObject.AddComponent<ScanItemCashRegisterModule>();
