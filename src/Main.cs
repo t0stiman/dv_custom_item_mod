@@ -21,8 +21,6 @@ namespace custom_item_mod
 				
 				modEntry.OnUnload = OnUnload;
 
-				//ItemModsFinder.Setup();
-
 				myHarmony = new Harmony(MyModEntry.Info.Id);
 				myHarmony.PatchAll(Assembly.GetExecutingAssembly());
 			}
