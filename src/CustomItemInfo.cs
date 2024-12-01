@@ -13,7 +13,10 @@ public class CustomItemInfo
 	
 	public string AssetBundleName;
 	public string PrefabPath;
+	public string ShelfPrefabPath;
 	public string IconStandardPath;
 	public string IconDroppedPath;
-	public Vector3 PreviewBounds;
+	public Vector3 ShelfBounds;
+	public Vector3 ShelfScale;
+	public Vector3 ShelfRotation;
 }

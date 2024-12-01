@@ -24,6 +24,7 @@ public class CustomItem
 	public ShopItemData ShopData { get; private set; }
 
 	public GameObject ProvidedPrefab { get; private set; }
+	private CustomItemInfo itemInfo;
 	
 	
 	/// <param name="itemInfo">The parsed item info json</param>
@@ -51,6 +52,9 @@ public class CustomItem
 		// C# pls
 		if (soldOnlyAt == default(List<Shop>)) { soldOnlyAt = new List<Shop>(); }
 		Main.Log($"Instantiating {itemInfo.Name}");
+
+		// save item info for later use
+		this.itemInfo = itemInfo;
 		
 		Name = itemInfo.Name;
 		Description = itemInfo.Description;
@@ -59,19 +63,15 @@ public class CustomItem
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
-		var previewBounds = itemInfo.PreviewBounds;
-		Main.Log($"Preview bounds: {previewBounds}");
-		if (previewBounds == default)
+		Vector3 previewBounds = default;
+		var collider = ProvidedPrefab.GetComponentInChildren<BoxCollider>();
+		if (collider != null)
 		{
-			var collider = ProvidedPrefab.GetComponentInChildren<BoxCollider>();
-			if (collider != null)
-			{
-				previewBounds = collider.size;
-			}
-			else
-			{
-				previewBounds = new Vector3(0.2f, 0.2f, 0.2f);
-			}
+			previewBounds = collider.size;
+		}
+		else
+		{
+			previewBounds = new Vector3(0.2f, 0.2f, 0.2f);
 		}
 		if (previewRotation == default) { previewRotation = Vector3.zero; }
 
@@ -83,7 +83,14 @@ public class CustomItem
 		shelfObject.transform.parent = ItemPrefab.transform.parent;
 		shelfObject.name = $"{ItemPrefab.name}_ShelfItem";
 		var shelfItemComponent = shelfObject.AddComponent<ShelfItem>();
-		shelfItemComponent.size = new Vector2(previewBounds.x, previewBounds.y);
+
+		// shelf bounds may be defined in the json, or it may be defined by a collider on the main object, or it may be defaulted
+		var shelfSize = itemInfo.ShelfBounds;
+		if (shelfSize == default)
+		{
+			shelfSize = previewBounds;
+		}
+		shelfItemComponent.size = new Vector2(shelfSize.x, shelfSize.y);
 
 		Main.Log($"Built shelf object for {itemInfo.Name}");
 		
