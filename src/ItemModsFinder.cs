@@ -105,8 +105,17 @@ public static class ItemModsFinder
 		var prefab = assBundle.LoadAsset<GameObject>(itemInfo.PrefabPath);
 		if (prefab == null)
 		{
-			Main.Error($"Failed to load {nameof(prefab)} from item {itemInfo.Name} at {itemInfo.PrefabPath}");
+			Main.Error($"Failed to load Item Prefab from item {itemInfo.Name} at {itemInfo.PrefabPath}");
 			success = false;
+		}
+		GameObject shelfPrefab = default;
+		if (itemInfo.ShelfPrefabPath != default)
+		{
+			shelfPrefab = assBundle.LoadAsset<GameObject>(itemInfo.ShelfPrefabPath);
+			if (shelfPrefab == null)
+			{
+				Main.Error($"Failed to load Shelf Prefab from item {itemInfo.Name} at {itemInfo.ShelfPrefabPath}");
+			}
 		}
 		
 		var iconStandard = assBundle.LoadAsset<Sprite>(itemInfo.IconStandardPath);
