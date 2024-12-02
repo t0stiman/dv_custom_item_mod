@@ -182,6 +182,7 @@ public class CustomItem
 
 		// these components are standard requirements for every item but cannot be added in Unity due to them being in Assembly and not a custom dll
 		var itemSpec = item.AddComponent<DV.CabControls.Spec.Item>();
+		itemSpec.itemUseApproach = ItemUseApproach.Continuous;
 		item.AddComponent<DV.Items.TrainItemActivityHandlerOverride>();
 		item.AddComponent<ItemSaveData>();
 		item.AddComponent<ShopRestocker>();
