@@ -1,6 +1,11 @@
-﻿using System;
+﻿using DV.CashRegister;
+using DV.Shops;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityModManagerNet;
 
@@ -11,34 +16,34 @@ public static class ItemModsFinder
 {
 	public const string ITEM_INFO_FILE = "item_info.json";
 
-	public static List<CustomItem> CustomItems = new();
+	public static readonly List<CustomItem> CustomItems = new();
 	
 	//store the file paths of bundles so we can check if they are already loaded
-	private static List<(string, AssetBundle)> loadedAssetBundles = new();
+	private static readonly Dictionary<string, AssetBundle> loadedAssetBundles = new();
 
 	/// <summary>
 	///     name -> (info, mod, directory)
 	/// </summary>
 	private static readonly Dictionary<string, (CustomItemInfo, UnityModManager.ModEntry, string)> itemsIDK = new();
 	
-	public static void Setup()
+	public static void InitializeItems()
 	{
-		UnityModManager.toggleModsListen += ToggleModsListen;
-		foreach (var entry in UnityModManager.modEntries)
+		Main.Log("Initializing items");
+		// this only happens on loading a new game, so clear everything out
+		CustomItems.Clear();
+		itemsIDK.Clear();
+		loadedAssetBundles.Clear();
+		foreach (var me in UnityModManager.modEntries)
 		{
-			FindCustomItemsInMod(entry);
+			if (me.Enabled)
+			{
+				SetupCustomItems(me);
+			}
 		}
+		Main.Log("Done initializing items");
 	}
 	
-	private static void ToggleModsListen(UnityModManager.ModEntry aModEntry, bool modEnabled)
-	{
-		if (!modEnabled) return;
-		
-		Main.Log($"New mod enabled ({aModEntry.Info.DisplayName}), checking for custom items...");
-		FindCustomItemsInMod(aModEntry);
-	} 
-	
-	private static void FindCustomItemsInMod(UnityModManager.ModEntry aModEntry)
+	private static void SetupCustomItems(UnityModManager.ModEntry aModEntry)
 	{
 		// search the subdirectories of the mod directory
 		foreach (string modSubDirectory in Directory.GetDirectories(aModEntry.Path))
@@ -67,7 +72,11 @@ public static class ItemModsFinder
 
 			try
 			{
-				SetupItem(itemInfo, modSubDirectory);
+				var item = SetupItem(itemInfo, modSubDirectory);
+				if (item != null)
+				{
+					CustomItems.Add(item);
+				}
 			}
 			catch (Exception theException)
 			{
@@ -78,16 +87,19 @@ public static class ItemModsFinder
 			itemsIDK.Add(itemInfo.Name, (itemInfo, aModEntry, modSubDirectory));
 		}
 	}
-	
+
 	public static string GetModAsset(string fileName, string modDir)
 	{
 		return Path.Combine(modDir, fileName);
 	}
 	
-	private static void SetupItem(CustomItemInfo itemInfo, string itemDirectory)
+	private static CustomItem SetupItem(CustomItemInfo itemInfo, string itemDirectory)
 	{
 		var assBundle = LoadAssetbundle(itemInfo, itemDirectory);
-		if(assBundle == null){ return; }
+		if(assBundle == null){
+			Main.Error($"Failed to load asset bundle for {itemInfo.Name} from {itemDirectory}");
+			return null; 
+		}
 
 		bool success = true;
 		var prefab = assBundle.LoadAsset<GameObject>(itemInfo.PrefabPath);
@@ -113,17 +125,16 @@ public static class ItemModsFinder
 
 		if (success)
 		{
-			CustomItems.Add(new CustomItem(
-				itemInfo.Name,
-				itemInfo.Description,
+			var item = new CustomItem(
+				itemInfo,
 				prefab,
-				itemInfo.Amount,
-				itemInfo.Price,
 				iconStandard,
 				iconDropped
 				//todo implement more parameters?
-			));
+			);
+			return item;
 		}
+		return null;
 	}
 
 	private static AssetBundle LoadAssetbundle(CustomItemInfo itemInfo, string itemDirectory)
@@ -131,24 +142,20 @@ public static class ItemModsFinder
 		var bundlePath = Path.GetFullPath(Path.Combine(itemDirectory, itemInfo.AssetBundleName));
 
 		//is already loaded?
-		foreach (var loadedAssBundle in loadedAssetBundles)
+		if (!loadedAssetBundles.ContainsKey(bundlePath))
 		{
-			if (loadedAssBundle.Item1 == bundlePath && loadedAssBundle.Item2 != null)
+			//load it
+			var assBundle = AssetBundle.LoadFromFile(bundlePath);
+			if (assBundle == null)
 			{
-				return loadedAssBundle.Item2;
+				Main.Error($"Failed to load the assetbundle from item '{itemInfo.Name}' at '{bundlePath}'");
+				return null;
 			}
+
+			loadedAssetBundles[bundlePath] = assBundle;
 		}
 
-		//load it
-		var assBundle = AssetBundle.LoadFromFile(bundlePath);
-		if (assBundle == null)
-		{
-			Main.Error($"Failed to load the assetbundle from item '{itemInfo.Name}' at '{bundlePath}'");
-			return null;
-		}
-		
-		loadedAssetBundles.Add((bundlePath, assBundle));
-		return assBundle;
+		return loadedAssetBundles[bundlePath];
 	}
 
 	public static void Unload()
@@ -157,5 +164,21 @@ public static class ItemModsFinder
 		{
 			assBundle.Unload(true);
 		}
+	}
+
+	internal static void FinalizeItems(GlobalShopController instance)
+	{
+		instance.SetupListeners(false);
+		foreach (var item in CustomItems)
+		{
+			item.FinishInitialization(instance);
+			foreach (var shop in instance.globalShopList)
+			{
+				item.AddToShop(shop);
+			}
+		}
+		instance.initialAmounts.Clear();
+		instance.InitializeShopData();
+		instance.SetupListeners(true);
 	}
 }
