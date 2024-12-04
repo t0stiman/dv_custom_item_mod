@@ -1,0 +1,21 @@
+<Project>
+    <PropertyGroup>
+        <DvInstallDir>D:\Programs\Derail Valley</DvInstallDir>
+        <UnityInstallDir>D:\Programs\Unity\2019.4.40f1\Editor</UnityInstallDir>
+        <ReferencePath>
+            $(DvInstallDir)\DerailValley_Data\Managed\;
+            $(DvInstallDir)\DerailValley_Data\Managed\UnityModManager\;
+            $(UnityInstallDir)\Data\Managed\
+        </ReferencePath>
+        <AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
+    </PropertyGroup>
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <!-- Copy to build folder -->
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="build/" />
+
+        <!-- Package after Release build -->
+        <Exec Condition="'$(OS)' == 'Windows_NT'" Command="powershell -executionpolicy bypass .\package.ps1 -NoArchive -OutputDirectory '$(DvInstallDir)\Mods'" />
+        <!-- Linux -->
+        <Exec Condition="'$(OS)' != 'Windows_NT'" Command="pwsh -Command &quot;(package.ps1)&quot;" />
+    </Target>
+</Project>
