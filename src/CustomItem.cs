@@ -62,16 +62,7 @@ public class CustomItem
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
-		Vector3 previewBounds = default;
-		var collider = providedItemPrefab.GetComponentInChildren<BoxCollider>();
-		if (collider != null)
-		{
-			previewBounds = collider.size;
-		}
-		else
-		{
-			previewBounds = new Vector3(0.2f, 0.2f, 0.2f);
-		}
+		var previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
 		if (previewRotation == default) { previewRotation = Vector3.zero; }
 
 		var itemSpec = SetupItemSpec(ItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
