@@ -63,15 +63,7 @@ public class CustomItem
 		Main.Log($"Preview bounds: {previewBounds}");
 		if (previewBounds == default)
 		{
-			var collider = ProvidedPrefab.GetComponentInChildren<BoxCollider>();
-			if (collider != null)
-			{
-				previewBounds = collider.size;
-			}
-			else
-			{
-				previewBounds = new Vector3(0.2f, 0.2f, 0.2f);
-			}
+			previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
 		}
 		if (previewRotation == default) { previewRotation = Vector3.zero; }
 
