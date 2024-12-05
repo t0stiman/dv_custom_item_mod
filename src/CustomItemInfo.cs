@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace custom_item_mod;
 
@@ -14,4 +15,5 @@ public class CustomItemInfo
 	public string PrefabPath;
 	public string IconStandardPath;
 	public string IconDroppedPath;
+	public Vector3 PreviewBounds;
 }

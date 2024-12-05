@@ -41,7 +41,6 @@ public class CustomItem
 		GameObject unityPrefab,
 		Sprite iconStandard,
 		Sprite iconDropped,
-		Bounds previewBounds = default,
 		Vector3 previewRotation = default,
 		List<Shop> soldOnlyAt = default,
 		bool careerOnly = false,
@@ -51,11 +50,6 @@ public class CustomItem
 	{
 		// C# pls
 		if (soldOnlyAt == default(List<Shop>)) { soldOnlyAt = new List<Shop>(); }
-		if (previewBounds == default(Bounds)) {
-			previewBounds = new Bounds(Vector3.zero, new Vector3(0.2f, 0.2f, 0.2f));
-		}
-		if (previewRotation == default) { previewRotation = Vector3.zero; }
-
 		Main.Log($"Instantiating {itemInfo.Name}");
 		
 		Name = itemInfo.Name;
@@ -65,13 +59,23 @@ public class CustomItem
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
+		var previewBounds = itemInfo.PreviewBounds;
+		Main.Log($"Preview bounds: {previewBounds}");
+		if (previewBounds == default)
+		{
+			previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
+		}
+		if (previewRotation == default) { previewRotation = Vector3.zero; }
+
 		var itemSpec = SetupItemSpec(immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
 		Main.Log($"Built item spec for {itemInfo.Name}");
 
 		var shelfObject = new GameObject();
+		shelfObject.SetActive(false);
 		shelfObject.transform.parent = ItemPrefab.transform.parent;
 		shelfObject.name = $"{ItemPrefab.name}_ShelfItem";
 		var shelfItemComponent = shelfObject.AddComponent<ShelfItem>();
+		shelfItemComponent.size = new Vector2(previewBounds.x, previewBounds.y);
 
 		Main.Log($"Built shelf object for {itemInfo.Name}");
 		
@@ -141,6 +145,7 @@ public class CustomItem
 		shop.scanItemResourceModules = shop.scanItemResourceModules.AddItem(module).ToArray();
 		var register = shop.GetComponentInChildren<CashRegisterWithModules>();
 		register.registerModules = register.registerModules.AddItem(module).ToArray();
+		shelfItem.gameObject.SetActive(true);
 
 		Main.Log($"{Name} added to {shop.name}");
 	}
@@ -178,7 +183,7 @@ public class CustomItem
 		bool isEssential,
 		Sprite iconStandard,
 		Sprite iconDropped,
-		Bounds previewBounds,
+		Vector3 previewBounds,
 		Vector3 previewRotation
 		)
 	{
@@ -207,7 +212,7 @@ public class CustomItem
 			
 		//this preview is shown when you hold R to place an item
 		itemSpec.previewPrefab = ItemPrefab;
-		itemSpec.previewBounds = previewBounds;
+		itemSpec.previewBounds = new Bounds(Vector3.zero, previewBounds);
 		itemSpec.previewRotation = previewRotation;
 		
 		return itemSpec;
