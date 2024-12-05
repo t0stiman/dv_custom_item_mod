@@ -18,11 +18,12 @@ namespace custom_item_mod
 			try
 			{
 				MyModEntry = modEntry;
-				
+
 				modEntry.OnUnload = OnUnload;
 
 				myHarmony = new Harmony(MyModEntry.Info.Id);
 				myHarmony.PatchAll(Assembly.GetExecutingAssembly());
+				Log($"Successfully loaded assembly {typeof(custom_item_components.GadgetItem).AssemblyQualifiedName}");
 			}
 			catch (Exception ex)
 			{

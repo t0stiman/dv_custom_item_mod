@@ -1,9 +1,13 @@
 <Project>
-    <PropertyGroup>
-        <UnityInstallDir>D:\Programs\Unity\2019.4.40f1\Editor</UnityInstallDir>
-        <ReferencePath>
-            $(UnityInstallDir)\Data\Managed\
-        </ReferencePath>
-        <AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
-    </PropertyGroup>
+		<PropertyGroup>
+				<UnityInstallDir>D:\Programs\Unity\2019.4.40f1\Editor</UnityInstallDir>
+				<ReferencePath>
+						$(UnityInstallDir)\Data\Managed\
+				</ReferencePath>
+				<AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
+		</PropertyGroup>
+		<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+				<!-- Copy to build folder -->
+				<Copy SourceFiles="$(TargetPath)" DestinationFolder="../custom_item_loader/build/" />
+		</Target>
 </Project>
