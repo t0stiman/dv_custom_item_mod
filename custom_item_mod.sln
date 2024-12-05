@@ -7,12 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "custom_item_mod", "custom_i
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "custom_item_components", "custom_item_components\custom_item_components.csproj", "{3DFC0A00-4573-49A3-A140-A50563107C96}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE77AC02-1C32-474B-89A1-15EEC6883FDC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{371F3613-8AC6-4736-ABC3-226DD3CA1DF9}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		LICENSE = LICENSE
-		custom_item_loader\README.MD = custom_item_loader\README.MD
-		custom_item_loader\repository.json = custom_item_loader\repository.json
+		README.MD = README.MD
 	EndProjectSection
 EndProject
 Global
