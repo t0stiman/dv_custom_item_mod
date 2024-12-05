@@ -138,7 +138,8 @@ public static class ItemModsFinder
 				itemInfo,
 				prefab,
 				iconStandard,
-				iconDropped
+				iconDropped,
+				shelfPrefab
 				//todo implement more parameters?
 			);
 			return item;

@@ -59,3 +59,4 @@ If the size cannot be determined in one of those ways, a default shelf space of 
 - ShelfBounds - Vector3: This is the width, height, and depth (x, y, z) of the item on the shelf
 - ShelfScale - Vector3: A scaling factor to apply to the item placed on the shelf (either the shelf prefab or the item prefab) to help it fit.  Scaling is per vector.
 - ShelfRotation - Vector3: Rotation in Eurler angles to apply to the shelf item.  If provided, this will override the automatic rotation applied to item prefab if no shelf prefab is provided.
+- PreviewRotation - Vector3: This rotation is applied to the item when placing it in the world using the "place" command (R by default on keyboard)

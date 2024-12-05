@@ -29,7 +29,6 @@ public class CustomItem
 	/// <param name="iconStandard">the inventory icon</param>
 	/// <param name="iconDropped">this icon will be shown in your inventory when you've dropped the item. For vanilla game items, this is a blue (#72A2B3) silhouette of the item.</param>
 	/// <param name="providedShelfPrefab">This prefab, if it exists, will be used for the shelf item.  This can have multiple items, different orientations, etc</param>
-	/// <param name="previewRotation">TODO what is this</param>
 	/// <param name="soldOnlyAt">item will only be available at these shops</param>
 	/// <param name="previewBounds">TODO IDK what this is</param>
 	/// <param name="careerOnly">if true, the item can only be purchased it career mode</param>
@@ -41,7 +40,6 @@ public class CustomItem
 		Sprite iconStandard,
 		Sprite iconDropped,
 		GameObject providedShelfPrefab = default,
-		Vector3 previewRotation = default,
 		List<Shop> soldOnlyAt = default,
 		bool careerOnly = false,
 		bool immuneToDumpster = true,
@@ -62,19 +60,10 @@ public class CustomItem
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
-		Vector3 previewBounds = default;
-		var collider = providedItemPrefab.GetComponentInChildren<BoxCollider>();
-		if (collider != null)
-		{
-			previewBounds = collider.size;
-		}
-		else
-		{
-			previewBounds = new Vector3(0.2f, 0.2f, 0.2f);
-		}
+		var previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
 		if (previewRotation == default) { previewRotation = Vector3.zero; }
 
-		var itemSpec = SetupItemSpec(ItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
+		var itemSpec = SetupItemSpec(ItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, itemInfo.previewRotation);
 		Main.Log($"Built item spec for {itemInfo.Name}");
 
 		var shelfObject = new GameObject();
