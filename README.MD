@@ -33,11 +33,10 @@ Icons are simply png files (keep them reasonably sized, they only show up around
 
 ### Shelf Size
 
-The shelf size is determined in one of three ways in order of priority:
+The shelf size is determined in one of two ways in order of priority:
 
 1. ShelfBounds json value - this is an XYZ Vector3.  Specifically X determines the width of the shelf space needed, and Y determines the height needed.  Z is not currently used.
 1. ShelfPrefab box collider size
-1. Item Prefab box collider size
 
 If the size cannot be determined in one of those ways, a default shelf space of .2 x .2 meters will be assumed.
 
