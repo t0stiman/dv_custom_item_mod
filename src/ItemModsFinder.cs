@@ -187,7 +187,6 @@ public static class ItemModsFinder
 				item.AddToShop(shop);
 			}
 		}
-		instance.initialAmounts.Clear();
 		instance.InitializeShopData();
 		instance.SetupListeners(true);
 	}
