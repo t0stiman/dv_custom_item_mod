@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using custom_item_components;
+using DV;
 using DV.CabControls;
 using DV.CabControls.Spec;
 using DV.CashRegister;
@@ -118,7 +119,8 @@ public class CustomItem
 		{
 			Main.Error($"Failed to initialize gadget {itemPrefab.name}: gadget not defined");
 		}
-		var actualGadgetBase = gadgetBase.gameObject.AddComponent<DV.Customization.Gadgets.GadgetBase>();
+		var actualGadgetBase = CustomGadgetBaseMap.CreateGadgetBase( gadgetBase );
+		actualGadgetBase.gameObject.SetLayerIncludingChildren((int)Layers.DVLayer.Interactable);
 		actualGadgetBase.hudPrefab = gadgetBase.hudPrefab;
 		actualGadgetBase.boundsCenter = gadgetBase.boundsCenter;
 		actualGadgetBase.boundsSize = gadgetBase.boundsSize;
@@ -127,9 +129,19 @@ public class CustomItem
 		actualGadgetBase.soundOnPlaced = gadgetBase.soundOnPlaced;
 		actualGadgetBase.soundOnRemoved = gadgetBase.soundOnRemoved;
 		actualGadgetBase.requiredMountPoints = gadgetBase.requiredMountPoints;
+		actualGadgetBase.requireSoldering = false;
+		actualGadgetBase.requirements = new DV.Customization.TrainCarCustomization.TrainCarCustomizerBase.TrainCarRequirements();
+		actualGadgetBase.requirements.electricsFuse = false;
+		actualGadgetBase.requirements.baseControls = false;
+		actualGadgetBase.requirements.trainCarPresence = DV.Customization.TrainCarCustomization.TrainCarCustomizerBase.CustomizerTrainCarRequirements.None;
+		actualGadgetBase.requirements.simPorts = new DV.Customization.TrainCarCustomization.TrainCarCustomizerBase.TrainCarRequirements.PortRequirement[0];
+
 
 		var actualGadgetItem = gadget.gameObject.AddComponent<DV.Customization.Gadgets.GadgetItem>();
 		actualGadgetItem.gadgetPrefab = actualGadgetBase;
+
+		CustomGadgetBaseMap.ApplyCustomizations(gadgetBase, ref actualGadgetBase);
+
 		Object.Destroy(gadget);
 		Object.Destroy(gadgetBase);
 		Main.Log($"Patched gadget {itemPrefab.name}");

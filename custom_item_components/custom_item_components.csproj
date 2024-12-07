@@ -7,6 +7,5 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include="UnityEngine" />
-		<Reference Include="UnityEngine.Core" />
 	</ItemGroup>
 </Project>
