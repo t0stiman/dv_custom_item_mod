@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using custom_item_components;
 using DV.CabControls;
 using DV.CabControls.Spec;
 using DV.CashRegister;
+using DV.Customization.Gadgets;
 using DV.Interaction;
 using DV.Shops;
 using HarmonyLib;
@@ -85,7 +87,7 @@ public class CustomItem
 		}
 		shelfItemComponent.size = new Vector2(shelfSize.x, shelfSize.y);
 		AddShelfSample(shelfObject, itemInfo, providedItemPrefab, providedShelfPrefab);
-
+		BuildGadgetIfPresent(ItemPrefab);
 		Main.Log($"Built shelf object for {itemInfo.Name}");
 		
 		ShopData = new ShopItemData
@@ -98,6 +100,40 @@ public class CustomItem
 			soldOnlyAt = soldOnlyAt
 		};
 	}
+
+	/// <summary>
+	/// This sets up the "gadget" components required
+	/// </summary>
+	/// <param name="itemPrefab"></param>
+	/// <exception cref="NotImplementedException"></exception>
+	private void BuildGadgetIfPresent(GameObject itemPrefab)
+	{
+		var gadget = itemPrefab.GetComponentInChildren<custom_item_components.GadgetItem>();
+		if (gadget == null) {
+			// No GadgetItem on this prefab
+			return;
+		}
+		var gadgetBase = gadget.gadget;
+		if (gadgetBase == null)
+		{
+			Main.Error($"Failed to initialize gadget {itemPrefab.name}: gadget not defined");
+		}
+		var actualGadgetBase = gadgetBase.gameObject.AddComponent<DV.Customization.Gadgets.GadgetBase>();
+		actualGadgetBase.hudPrefab = gadgetBase.hudPrefab;
+		actualGadgetBase.boundsCenter = gadgetBase.boundsCenter;
+		actualGadgetBase.boundsSize = gadgetBase.boundsSize;
+		actualGadgetBase.removalMethod = (DV.Customization.Gadgets.GadgetBase.GadgetRemovalMethod)gadgetBase.removalMethod;
+		actualGadgetBase.highlightMeshes = gadgetBase.highlightMeshes;
+		actualGadgetBase.soundOnPlaced = gadgetBase.soundOnPlaced;
+		actualGadgetBase.soundOnRemoved = gadgetBase.soundOnRemoved;
+		actualGadgetBase.requiredMountPoints = gadgetBase.requiredMountPoints;
+
+		var actualGadgetItem = gadget.gameObject.AddComponent<DV.Customization.Gadgets.GadgetItem>();
+		actualGadgetItem.gadgetPrefab = actualGadgetBase;
+		Object.Destroy(gadget);
+		Object.Destroy(gadgetBase);
+		Main.Log($"Patched gadget {itemPrefab.name}");
+}
 
 	/// <summary>
 	/// Called to handle initialization steps that depend on GlobalShopController
