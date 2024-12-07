@@ -38,7 +38,7 @@ The shelf size is determined in one of two ways in order of priority:
 1. ShelfBounds json value - this is an XYZ Vector3.  Specifically X determines the width of the shelf space needed, and Y determines the height needed.  Z is not currently used.
 1. ShelfPrefab box collider size
 
-If the size cannot be determined in one of those ways, a default shelf space of .2 x .2 meters will be assumed.
+If the size cannot be determined in one of those ways, a default shelf space of .35 x .3 meters will be assumed.
 
 ### JSON Fields
 
