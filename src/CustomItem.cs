@@ -49,19 +49,14 @@ public class CustomItem
 		// C# pls
 		if (soldOnlyAt == default(List<Shop>)) { soldOnlyAt = new List<Shop>(); }
 		Main.Log($"Instantiating {itemInfo.Name}");
-
-		// save item info for later use
-		//this.itemInfo = itemInfo;
 		
 		Name = itemInfo.Name;
 		Description = itemInfo.Description;
 		ItemPrefab = CreateItemPrefab(providedItemPrefab);
-		//this.providedItemPrefab = providedItemPrefab;
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
 		var previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
-		if (previewRotation == default) { previewRotation = Vector3.zero; }
 
 		var itemSpec = SetupItemSpec(ItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, itemInfo.PreviewRotation);
 		Main.Log($"Built item spec for {itemInfo.Name}");

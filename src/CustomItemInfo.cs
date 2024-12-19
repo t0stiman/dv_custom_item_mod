@@ -19,10 +19,10 @@ public class CustomItemInfo
 	public string IconDroppedPath;
 
 	// Optional Asset References
-    public string ShelfPrefabPath;
+	public string ShelfPrefabPath;
 
 	//Optional info fields
-    public Vector3 ShelfBounds;
+	public Vector3 ShelfBounds;
 	public Vector3 ShelfScale;
 	public Vector3 ShelfRotation;
 	public Vector3 PreviewRotation;

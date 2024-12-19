@@ -36,7 +36,7 @@ Icons are simply png files (keep them reasonably sized, they only show up around
 The shelf size is determined in one of two ways in order of priority:
 
 1. ShelfBounds json value - this is an XYZ Vector3.  Specifically X determines the width of the shelf space needed, and Y determines the height needed.  Z is not currently used.
-1. ShelfPrefab box collider size
+1. ShelfPrefab box collider size (only used if a shelf prefab is provided)
 
 If the size cannot be determined in one of those ways, a default shelf space of .35 x .3 meters will be assumed.
 
@@ -56,6 +56,6 @@ If the size cannot be determined in one of those ways, a default shelf space of 
 **Optional Fields:**
 - ShelfPrefabPath - string: This is the path within the asset bundle to get to your shelf prefab if provided.  If missing, the item prefab will be used rotated 180 degrees.
 - ShelfBounds - Vector3: This is the width, height, and depth (x, y, z) of the item on the shelf
-- ShelfScale - Vector3: A scaling factor to apply to the item placed on the shelf (either the shelf prefab or the item prefab) to help it fit.  Scaling is per vector.
-- ShelfRotation - Vector3: Rotation in Eurler angles to apply to the shelf item.  If provided, this will override the automatic rotation applied to item prefab if no shelf prefab is provided.
+- ShelfScale - Vector3: A scaling factor to apply to the item placed on the shelf (either the shelf prefab or the item prefab) to help it fit.  Scaling is non-uniform (unless x,y,and z match), and a full vector3 is required.
+- ShelfRotation - Vector3: Rotation in Euler angles (Roll Pitch Yaw) in degrees to apply to the shelf item.  If provided, this will override the automatic rotation applied to item prefab if no shelf prefab is provided.
 - PreviewRotation - Vector3: This rotation is applied to the item when placing it in the world using the "place" command (R by default on keyboard)
