@@ -49,14 +49,10 @@ public class CustomItem
 		// C# pls
 		if (soldOnlyAt == default(List<Shop>)) { soldOnlyAt = new List<Shop>(); }
 		Main.Log($"Instantiating {itemInfo.Name}");
-
-		// save item info for later use
-		//this.itemInfo = itemInfo;
 		
 		Name = itemInfo.Name;
 		Description = itemInfo.Description;
 		ItemPrefab = CreateItemPrefab(providedItemPrefab);
-		//this.providedItemPrefab = providedItemPrefab;
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
