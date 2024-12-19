@@ -23,14 +23,12 @@ public class CustomItem
 	public InventoryItemSpec ItemSpec => ShopData.item;
 	public ShopItemData ShopData { get; private set; }
 
-	public GameObject ProvidedPrefab { get; private set; }
-	
 	
 	/// <param name="itemInfo">The parsed item info json</param>
-	/// <param name="unityPrefab">the prefab of the item as extracted from the asset bundle</param>
+	/// <param name="providedItemPrefab">the prefab of the item as extracted from the asset bundle</param>
 	/// <param name="iconStandard">the inventory icon</param>
 	/// <param name="iconDropped">this icon will be shown in your inventory when you've dropped the item. For vanilla game items, this is a blue (#72A2B3) silhouette of the item.</param>
-	/// <param name="previewRotation">TODO what is this</param>
+	/// <param name="providedShelfPrefab">This prefab, if it exists, will be used for the shelf item.  This can have multiple items, different orientations, etc</param>
 	/// <param name="soldOnlyAt">item will only be available at these shops</param>
 	/// <param name="previewBounds">TODO IDK what this is</param>
 	/// <param name="careerOnly">if true, the item can only be purchased it career mode</param>
@@ -38,10 +36,10 @@ public class CustomItem
 	/// <param name="isEssential">if true, the item will leave a ghost in your inventory when you drop it and the inventory slot will be reserved for this item</param>
 	public CustomItem(
 		CustomItemInfo itemInfo,
-		GameObject unityPrefab,
+		GameObject providedItemPrefab,
 		Sprite iconStandard,
 		Sprite iconDropped,
-		Vector3 previewRotation = default,
+		GameObject providedShelfPrefab = default,
 		List<Shop> soldOnlyAt = default,
 		bool careerOnly = false,
 		bool immuneToDumpster = true,
@@ -54,20 +52,13 @@ public class CustomItem
 		
 		Name = itemInfo.Name;
 		Description = itemInfo.Description;
-		ItemPrefab = CreateItemPrefab(unityPrefab);
-		ProvidedPrefab = unityPrefab;
+		ItemPrefab = CreateItemPrefab(providedItemPrefab);
 
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
-		var previewBounds = itemInfo.PreviewBounds;
-		Main.Log($"Preview bounds: {previewBounds}");
-		if (previewBounds == default)
-		{
-			previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
-		}
-		if (previewRotation == default) { previewRotation = Vector3.zero; }
+		var previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
 
-		var itemSpec = SetupItemSpec(immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, previewRotation);
+		var itemSpec = SetupItemSpec(ItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, itemInfo.PreviewRotation);
 		Main.Log($"Built item spec for {itemInfo.Name}");
 
 		var shelfObject = new GameObject();
@@ -75,7 +66,22 @@ public class CustomItem
 		shelfObject.transform.parent = ItemPrefab.transform.parent;
 		shelfObject.name = $"{ItemPrefab.name}_ShelfItem";
 		var shelfItemComponent = shelfObject.AddComponent<ShelfItem>();
-		shelfItemComponent.size = new Vector2(previewBounds.x, previewBounds.y);
+
+		// shelf bounds may be defined in the json, or it may be defined by a collider on the main object, or it may be defaulted
+		var shelfSize = itemInfo.ShelfBounds;
+		if (shelfSize == default && providedShelfPrefab == default)
+		{
+			shelfSize = previewBounds;
+		} else if (shelfSize == default && providedShelfPrefab != default) {
+			var shelfCollider = providedShelfPrefab.GetComponent<BoxCollider>();
+			if (shelfCollider != null)
+			{
+				shelfSize = shelfCollider.size;
+			}
+			else shelfSize = previewBounds;
+		}
+		shelfItemComponent.size = new Vector2(shelfSize.x, shelfSize.y);
+		AddShelfSample(shelfObject, itemInfo, providedItemPrefab, providedShelfPrefab);
 
 		Main.Log($"Built shelf object for {itemInfo.Name}");
 		
@@ -100,14 +106,6 @@ public class CustomItem
 		var tag = Object.Instantiate(shopController.scanItemShelfPrefab.transform.Find("ScanItem"));
 		tag.parent = ShopData.shelfItem.transform;
 		tag.name = "ScanItem";
-
-		// Add a preview object to show on the shelf
-		var shopSample = UnityEngine.Object.Instantiate(ProvidedPrefab);
-		shopSample.name = $"{ProvidedPrefab.name} - preview";
-		shopSample.transform.parent = ShopData.shelfItem.transform;
-		// this probably needs to be adjusted for other items - we may want to make this something in the json?
-		// TODO: figure out a sane way to calculate this.
-		shopSample.transform.localPosition = new Vector3(0f, 0f, -0.1f);
 
 		// Add the ScanItemCashRegisterModule to the shelf item
 		var module = ShopData.shelfItem.gameObject.AddComponent<ScanItemCashRegisterModule>();
@@ -178,7 +176,9 @@ public class CustomItem
 		return item;
 	}
 
-	private InventoryItemSpec SetupItemSpec(
+	private static InventoryItemSpec SetupItemSpec(
+		GameObject itemPrefab,
+		string name,
 		bool immuneToDumpster,
 		bool isEssential,
 		Sprite iconStandard,
@@ -187,9 +187,9 @@ public class CustomItem
 		Vector3 previewRotation
 		)
 	{
-		var itemSpec = ItemPrefab.AddComponent<InventoryItemSpec>();
+		var itemSpec = itemPrefab.AddComponent<InventoryItemSpec>();
 		
-		var itemKey = $"{Main.MyModEntry.Info.Id}/{Name}";
+		var itemKey = $"{Main.MyModEntry.Info.Id}/{name}";
 		//name of the item
 		itemSpec.localizationKeyName = $"{itemKey}/name";
 		//description of the item
@@ -211,10 +211,39 @@ public class CustomItem
 		itemSpec.itemIconSpriteDropped = iconDropped;
 			
 		//this preview is shown when you hold R to place an item
-		itemSpec.previewPrefab = ItemPrefab;
+		itemSpec.previewPrefab = itemPrefab;
 		itemSpec.previewBounds = new Bounds(Vector3.zero, previewBounds);
 		itemSpec.previewRotation = previewRotation;
 		
 		return itemSpec;
+	}
+
+	private static void AddShelfSample(GameObject shelfObject, CustomItemInfo itemInfo, GameObject providedItemPrefab, GameObject providedShelfPrefab = default)
+	{
+		// Add a preview object to show on the shelf
+		GameObject shopSample;
+		if (providedShelfPrefab != default)
+		{
+			shopSample = UnityEngine.Object.Instantiate(providedShelfPrefab);
+			shopSample.name = providedShelfPrefab.name;
+		}
+		else
+		{
+			shopSample = UnityEngine.Object.Instantiate(providedItemPrefab);
+			shopSample.name = $"{providedItemPrefab.name} - preview";
+		}
+		shopSample.transform.parent = shelfObject.transform;
+		if (itemInfo.ShelfRotation != default)
+		{
+			shopSample.transform.eulerAngles = itemInfo.ShelfRotation;
+		}
+		else if (providedShelfPrefab == default)
+		{
+			shopSample.transform.eulerAngles = new Vector3(0, 180, 0);
+		}
+		if (itemInfo.ShelfScale != default)
+		{
+			shopSample.transform.localScale = itemInfo.ShelfScale;
+		}
 	}
 }
