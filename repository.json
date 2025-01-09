@@ -1,6 +1,11 @@
 {
     "Releases": [
         {
+          "Id": "custom_item_mod",
+          "Version": "0.1.0",
+          "DownloadUrl": "https://github.com/t0stiman/dv_custom_item_mod/releases/download/v0.1.0/custom_item_mod.zip"
+        },
+        {
             "Id": "custom_item_mod",
             "Version": "0.0.2",
             "DownloadUrl": "https://github.com/t0stiman/dv_custom_item_mod/releases/download/v0.0.2/custom_item_mod.zip"
