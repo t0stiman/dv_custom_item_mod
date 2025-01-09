@@ -1,8 +1,5 @@
 ﻿using DV.Shops;
 using HarmonyLib;
-using Unity.Mathematics;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace custom_item_mod.Patches;
 

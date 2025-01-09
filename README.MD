@@ -1,6 +1,6 @@
 ﻿# Custom Item Mod
 
-![screenshot.png](screenshot.png)
+![screenshot](screenshot.png)
 
 This is a mod for Derail Valley that let's mod developers add custom items to the game. The items will be purchaseable in the shops of the valley.   
 This mod doesn't do anything by itself! You have to create a custom item [like this one](https://git.tostiman.com/tostiman/dv_blahaj).
