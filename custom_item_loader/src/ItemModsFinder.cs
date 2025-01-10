@@ -1,11 +1,7 @@
-﻿using DV.CashRegister;
-using DV.Shops;
-using HarmonyLib;
+﻿using DV.Shops;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityModManagerNet;
 
@@ -66,8 +62,7 @@ public static class ItemModsFinder
 
 				continue;
 			}
-
-			Main.Log("sanity check");
+			
 			Main.Log($"Found custom item '{itemInfo.Name}' from '{aModEntry.Info.DisplayName}' in '{modSubDirectory}'");
 
 			try

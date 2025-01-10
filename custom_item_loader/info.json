@@ -1,6 +1,6 @@
 {
 	"Id": "custom_item_mod",
-	"Version": "0.0.3",
+	"Version": "0.1.0",
 	"DisplayName": "Custom Item Mod",
 	"Author": "Tostiman",
 	"EntryMethod": "custom_item_mod.Main.Load",

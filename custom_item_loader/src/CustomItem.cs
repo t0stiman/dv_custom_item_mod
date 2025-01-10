@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using custom_item_components;
 using DV;
-using DV.CabControls;
 using DV.CabControls.Spec;
 using DV.CashRegister;
-using DV.Customization.Gadgets;
-using DV.Interaction;
 using DV.Shops;
 using HarmonyLib;
 using TMPro;
@@ -33,7 +28,6 @@ public class CustomItem
 	/// <param name="iconDropped">this icon will be shown in your inventory when you've dropped the item. For vanilla game items, this is a blue (#72A2B3) silhouette of the item.</param>
 	/// <param name="providedShelfPrefab">This prefab, if it exists, will be used for the shelf item.  This can have multiple items, different orientations, etc</param>
 	/// <param name="soldOnlyAt">item will only be available at these shops</param>
-	/// <param name="previewBounds">TODO IDK what this is</param>
 	/// <param name="careerOnly">if true, the item can only be purchased it career mode</param>
 	/// <param name="immuneToDumpster">if true, item won't be destroyed by dumpsters (I think)</param>
 	/// <param name="isEssential">if true, the item will leave a ghost in your inventory when you drop it and the inventory slot will be reserved for this item</param>
