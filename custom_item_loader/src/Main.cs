@@ -18,11 +18,13 @@ namespace custom_item_mod
 			try
 			{
 				MyModEntry = modEntry;
-				
+
 				modEntry.OnUnload = OnUnload;
 
 				myHarmony = new Harmony(MyModEntry.Info.Id);
 				myHarmony.PatchAll(Assembly.GetExecutingAssembly());
+				// force load of custom item components
+				modEntry.Logger.Log($"Loading required assembly for {typeof(custom_item_components.GadgetItem)}");
 			}
 			catch (Exception ex)
 			{

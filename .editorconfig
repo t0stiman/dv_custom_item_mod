@@ -1,0 +1,6 @@
+[*.cs]
+
+#### Core EditorConfig Options ####
+
+# Indentation and spacing
+indent_style = tab
