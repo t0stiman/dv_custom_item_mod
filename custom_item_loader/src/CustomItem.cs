@@ -96,7 +96,6 @@ public class CustomItem
 	/// This sets up the "gadget" components required
 	/// </summary>
 	/// <param name="itemPrefab"></param>
-	/// <exception cref="NotImplementedException"></exception>
 	private void BuildGadgetIfPresent(GameObject itemPrefab)
 	{
 		var gadget = itemPrefab.GetComponentInChildren<custom_item_components.GadgetItem>();
