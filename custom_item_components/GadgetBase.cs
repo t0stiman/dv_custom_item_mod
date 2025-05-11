@@ -9,10 +9,13 @@ namespace custom_item_components
 {
 	public class GadgetBase : MonoBehaviour
 	{
-		public enum GadgetRemovalMethod : byte
+		public enum GadgetRemovalMethod : short
 		{
-			Remover,
-			EmptyHand
+			None=0,
+			Remover=1,
+			EmptyHand=2,
+			FromCode=3,
+			Any=-1
 		}
 		public GameObject hudPrefab;
 		public Vector3 boundsCenter;

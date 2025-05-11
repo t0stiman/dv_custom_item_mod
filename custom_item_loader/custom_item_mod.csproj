@@ -13,13 +13,15 @@
 		<!-- Derail Valley -->
 		<Reference Include="Assembly-CSharp" />
 		<Reference Include="DV.BrakeSystem" />
-		<Reference Include="DV.Common" />
+    <Reference Include="DV.CabControls.Spec" />
+    <Reference Include="DV.Common" />
 		<Reference Include="DV.ControllerAnchors" />
 		<Reference Include="DV.Highlighting" />
 		<Reference Include="DV.Interaction" />
 		<Reference Include="DV.Inventory" />
 		<Reference Include="DV.Localization" />
-		<Reference Include="DV.NAudio" />
+    <Reference Include="DV.Layers" />
+    <Reference Include="DV.NAudio" />
 		<Reference Include="DV.PointSet" />
 		<Reference Include="DV.RadioPlayer" />
 		<Reference Include="DV.Scenarios.CRUD" />
