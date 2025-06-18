@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<AssemblyName>custom_item_mod</AssemblyName>
 		<TargetFramework>net48</TargetFramework>
-		<LangVersion>latest</LangVersion>
+		<LangVersion>11</LangVersion>
 		<WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
 	</PropertyGroup>
 	

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace custom_item_components
 {
@@ -20,11 +15,10 @@ namespace custom_item_components
 		public GameObject hudPrefab;
 		public Vector3 boundsCenter;
 		public Vector3 boundsSize;
-		public GadgetBase.GadgetRemovalMethod removalMethod;
+		public GadgetRemovalMethod removalMethod;
 		public MeshFilter[] highlightMeshes;
 		public AudioClip soundOnPlaced;
 		public AudioClip soundOnRemoved;
 		public int requiredMountPoints;
-
 	}
 }

@@ -2,10 +2,12 @@
 	<PropertyGroup>
 		<AssemblyName>custom_item_components</AssemblyName>
 		<TargetFramework>net48</TargetFramework>
-		<LangVersion>latest</LangVersion>
+		<LangVersion>11</LangVersion>
 		<WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
 	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include="UnityEngine" />
+		<Reference Include="UnityEngine.AudioModule" />
+		<Reference Include="UnityEngine.CoreModule" />
 	</ItemGroup>
 </Project>
