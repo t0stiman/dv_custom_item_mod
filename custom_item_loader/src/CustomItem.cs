@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DV;
+using DV.CabControls.Spec;
 using DV.CashRegister;
 using DV.Shops;
 using HarmonyLib;
@@ -52,7 +54,6 @@ public class CustomItem
 		Main.Log($"Loaded prefabs for {itemInfo.Name}");
 
 		var previewBounds = new Vector3(0.35f, 0.3f, 0.2f);
-
 		var itemSpec = SetupItemSpec(ItemPrefab, Name, immuneToDumpster, isEssential, iconStandard, iconDropped, previewBounds, itemInfo.PreviewRotation);
 		Main.Log($"Built item spec for {itemInfo.Name}");
 
@@ -77,7 +78,7 @@ public class CustomItem
 		}
 		shelfItemComponent.size = new Vector2(shelfSize.x, shelfSize.y);
 		AddShelfSample(shelfObject, itemInfo, providedItemPrefab, providedShelfPrefab);
-
+		BuildGadgetIfPresent(ItemPrefab);
 		Main.Log($"Built shelf object for {itemInfo.Name}");
 		
 		ShopData = new ShopItemData
@@ -90,6 +91,50 @@ public class CustomItem
 			soldOnlyAt = soldOnlyAt
 		};
 	}
+
+	/// <summary>
+	/// This sets up the "gadget" components required
+	/// </summary>
+	/// <param name="itemPrefab"></param>
+	private void BuildGadgetIfPresent(GameObject itemPrefab)
+	{
+		var gadget = itemPrefab.GetComponentInChildren<custom_item_components.GadgetItem>();
+		if (gadget == null) {
+			// No GadgetItem on this prefab
+			return;
+		}
+		var gadgetBase = gadget.gadget;
+		if (gadgetBase == null)
+		{
+			Main.Error($"Failed to initialize gadget {itemPrefab.name}: gadget not defined");
+		}
+		var actualGadgetBase = CustomGadgetBaseMap.CreateGadgetBase( gadgetBase );
+		actualGadgetBase.gameObject.SetLayerIncludingChildren((int)Layers.DVLayer.Interactable);
+		actualGadgetBase.hudPrefab = gadgetBase.hudPrefab;
+		actualGadgetBase.boundsCenter = gadgetBase.boundsCenter;
+		actualGadgetBase.boundsSize = gadgetBase.boundsSize;
+		actualGadgetBase.removalMethod = (DV.Customization.Gadgets.GadgetBase.GadgetRemovalMethod)gadgetBase.removalMethod;
+		actualGadgetBase.highlightMeshes = gadgetBase.highlightMeshes;
+		actualGadgetBase.soundOnPlaced = gadgetBase.soundOnPlaced;
+		actualGadgetBase.soundOnRemoved = gadgetBase.soundOnRemoved;
+		actualGadgetBase.requiredMountPoints = gadgetBase.requiredMountPoints;
+		actualGadgetBase.requireSoldering = false;
+		actualGadgetBase.requirements = new DV.Customization.TrainCarCustomization.TrainCarCustomizerBase.TrainCarRequirements();
+		actualGadgetBase.requirements.electricsFuse = false;
+		actualGadgetBase.requirements.baseControls = false;
+		actualGadgetBase.requirements.trainCarPresence = DV.Customization.TrainCarCustomization.TrainCarCustomizerBase.CustomizerTrainCarRequirements.None;
+		actualGadgetBase.requirements.simPorts = new DV.Customization.TrainCarCustomization.TrainCarCustomizerBase.TrainCarRequirements.PortRequirement[0];
+
+
+		var actualGadgetItem = gadget.gameObject.AddComponent<DV.Customization.Gadgets.GadgetItem>();
+		actualGadgetItem.gadgetPrefab = actualGadgetBase;
+
+		CustomGadgetBaseMap.ApplyCustomizations(gadgetBase, ref actualGadgetBase);
+
+		Object.Destroy(gadget);
+		Object.Destroy(gadgetBase);
+		Main.Log($"Patched gadget {itemPrefab.name}");
+}
 
 	/// <summary>
 	/// Called to handle initialization steps that depend on GlobalShopController
@@ -161,6 +206,7 @@ public class CustomItem
 
 		// these components are standard requirements for every item but cannot be added in Unity due to them being in Assembly and not a custom dll
 		var itemSpec = item.AddComponent<DV.CabControls.Spec.Item>();
+		itemSpec.itemUseApproach = ItemUseApproach.Continuous;
 		item.AddComponent<DV.Items.TrainItemActivityHandlerOverride>();
 		item.AddComponent<ItemSaveData>();
 		item.AddComponent<ShopRestocker>();
